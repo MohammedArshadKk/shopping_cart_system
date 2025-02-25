@@ -1,38 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shopping_cart_system/controller/cubit/cubit_get_product/product_cubit_cubit.dart';
 import 'package:shopping_cart_system/model/product_model.dart';
 import 'package:shopping_cart_system/views/products/widgets/actions_cart_button_widget.dart';
-import 'package:shopping_cart_system/views/products/widgets/product_card.dart';
+import 'package:shopping_cart_system/views/products/widgets/error_widget.dart';
+import 'package:shopping_cart_system/views/products/widgets/grid_widget.dart';
+import 'package:shopping_cart_system/views/products/widgets/no_data_widget.dart';
 import 'package:shopping_cart_system/views/utils/colors.dart';
+import 'package:shopping_cart_system/views/utils/loading_widget.dart';
 
-class ProductsScreen extends StatelessWidget {
+class ProductsScreen extends StatefulWidget {
   const ProductsScreen({super.key});
 
   @override
+  State<ProductsScreen> createState() => _ProductsScreenState();
+}
+
+class _ProductsScreenState extends State<ProductsScreen> {
+  @override
+  void initState() {
+    context.read<ProductCubitCubit>().fetchproductdataCubit();  
+    super.initState();
+  }
+  @override
   Widget build(BuildContext context) {
-    final List<Product> products = [
-      Product(
-        id: 1,
-        title: "Fjallraven - Foldsack No. 1 Backpack",
-        price: 109.95,
-        description:
-            "Your perfect pack for everyday use and walks in the forest.",
-        category: "Men's Clothing",
-        image: "https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg",
-        rating: 3.9,
-        ratingCount: 120,
-      ),
-      Product(
-        id: 2,
-        title: "Mens Casual Premium Slim Fit T-Shirts",
-        price: 22.3,
-        description: "Slim-fitting style, contrast raglan long sleeve.",
-        category: "Men's Clothing",
-        image:
-            "https://fakestoreapi.com/img/71-3HjGNDUL._AC_SY879._SX._UX._SY._UY_.jpg",
-        rating: 4.1,
-        ratingCount: 259,
-      ),
-    ];
     return Scaffold(
       appBar: AppBar(
         title: const Text('Shop'),
@@ -50,16 +41,18 @@ class ProductsScreen extends StatelessWidget {
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(12.0),
-              child: GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  childAspectRatio: 0.64,
-                  crossAxisSpacing: 12,
-                  mainAxisSpacing: 16,
-                ),
-                itemCount: products.length,
-                itemBuilder: (context, index) { 
-                  return ProductCard(product: products[index]);
+              child: BlocBuilder<ProductCubitCubit, ProductCubitState>(
+                builder: (context, state) {
+                  if (state is LoadingState) {
+                    return LoadingWidget();
+                  } else if (state is NoDataState) {
+                    return NoDataWidget();
+                  } else if (state is DataLoadedState) {
+                    return GridWidget(products: state.products);
+                  } else if (state is ErrorState) {
+                    return ErrorWidgetData(error: state.error);
+                  }
+                  return NoDataWidget();
                 },
               ),
             ),
@@ -72,44 +65,6 @@ class ProductsScreen extends StatelessWidget {
         backgroundColor: AppColors.accent,
         child: const Icon(Icons.favorite, color: AppColors.background),
       ),
-    );
-  }
-}
-
-
-
-class RatingStars extends StatelessWidget {
-  final double rating;
-  final double size;
-
-  const RatingStars({Key? key, required this.rating, this.size = 16})
-    : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: List.generate(5, (index) {
-        if (index < rating.floor()) {
-          return Icon(
-            Icons.star_rounded,
-            color: AppColors.starYellow,
-            size: size,
-          );
-        } else if (index == rating.floor() && rating % 1 > 0) {
-          return Icon(
-            Icons.star_half_rounded,
-            color: AppColors.starYellow,
-            size: size,
-          );
-        } else {
-          return Icon(
-            Icons.star_border_rounded,
-            color: AppColors.starYellow,
-            size: size,
-          );
-        }
-      }),
     );
   }
 }

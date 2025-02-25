@@ -9,5 +9,5 @@ class AppColors {
   static const Color textSecondary = Color(0xFF757575);
   static const Color divider = Color(0xFFE0E0E0);
   static const Color starYellow = Color(0xFFFFCA28);
-  static const Color buttonText = Colors.white;
+  static const Color buttonText = Colors.white; 
 }
