@@ -13,8 +13,12 @@ class CartCubit extends Cubit<CartState> {
   int count = 0;
   addtoCart(Product product) {
     try {
-      productsCart.add(product);
-      emit(CartUpdated(products: productsCart));
+      if (!productsCart.contains(product)) {
+        product.count += 1;
+        productsCart.add(product);
+      } else {}
+
+      emit(CartUpdated(products: productsCart, count: count));
     } catch (e) {
       log(e.toString());
     }
@@ -29,29 +33,29 @@ class CartCubit extends Cubit<CartState> {
     }
   }
 
-  void calculateAmount(amount) {
-    count = count + 1;
+  void calculateAmount(amount, Product product) {
     totalAmount += amount;
+    product.count += 1;
     log(totalAmount.toString());
     emit(CartUpdated(products: productsCart, count: count, total: totalAmount));
   }
-  void decrementQuantity(amount) {
-    
-    if(count>0){
-count = count - 1;
+
+  void decrementQuantity(amount, Product product) {
+    if (product.count > 0) {
+      product.count -= 1 ;
+      
     }
-    
-    if(totalAmount>0){
-totalAmount -= amount;
+
+    if (totalAmount > 0) {
+      totalAmount -= amount;
     }
     log(totalAmount.toString());
     emit(CartUpdated(products: productsCart, count: count, total: totalAmount));
+  }
 
- 
-}
- void reset() {
+  void reset() {
     count = 0;
-    totalAmount = 0; 
+    totalAmount = 0;
     log(totalAmount.toString());
     emit(CartUpdated(products: productsCart, count: count, total: totalAmount));
   }

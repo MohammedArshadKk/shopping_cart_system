@@ -55,6 +55,7 @@ class _CartItemDetailsState extends State<CartItemDetails> {
                       onTap: () {
                         context.read<CartCubit>().decrementQuantity(
                           widget.item.price,
+                          widget.item, 
                         );
                       },
                       child: Container(
@@ -75,7 +76,7 @@ class _CartItemDetailsState extends State<CartItemDetails> {
                         return Container(
                           padding: const EdgeInsets.symmetric(horizontal: 12),
                           child: Text(
-                            count.toString(),
+                            widget.item.count.toString(),
                             style: const TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
@@ -89,6 +90,7 @@ class _CartItemDetailsState extends State<CartItemDetails> {
                           () => {
                             context.read<CartCubit>().calculateAmount(
                               widget.item.price,
+                              widget.item
                             ),
                             setState(() {}),
                           },
