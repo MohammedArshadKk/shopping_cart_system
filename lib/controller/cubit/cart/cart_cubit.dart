@@ -16,7 +16,9 @@ class CartCubit extends Cubit<CartState> {
       if (!productsCart.contains(product)) {
         product.count += 1;
         productsCart.add(product);
-      } else {}
+      } else {
+        product.count += 1;
+      }
 
       emit(CartUpdated(products: productsCart, count: count));
     } catch (e) {
@@ -42,8 +44,7 @@ class CartCubit extends Cubit<CartState> {
 
   void decrementQuantity(amount, Product product) {
     if (product.count > 0) {
-      product.count -= 1 ;
-      
+      product.count -= 1;
     }
 
     if (totalAmount > 0) {
